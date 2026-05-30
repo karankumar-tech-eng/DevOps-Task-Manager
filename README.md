@@ -71,6 +71,9 @@ cd backend
 npm install
 npm run dev
 ```
+## Project Screenshot
+
+![Home Page](screenshots/homepage.png)
 
 ## Current Progress
 
