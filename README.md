@@ -47,7 +47,9 @@ DevOps-Task-Manager/
 │
 └── README.md
 ```
+## Project Screenshot
 
+![Home Page](screenshots/homepage.png)
 ## Installation
 
 ### Clone Repository
@@ -71,10 +73,6 @@ cd backend
 npm install
 npm run dev
 ```
-## Project Screenshot
-
-![Home Page](screenshots/homepage.png)
-
 ## Current Progress
 
 ✅ React Frontend
