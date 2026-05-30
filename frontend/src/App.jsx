@@ -23,55 +23,140 @@ function App() {
     });
 
     const newTask = await response.json();
-
     setTasks([...tasks, newTask]);
     setTask("");
   };
 
+  const deleteTask = async (id) => {
+    await fetch(`http://localhost:5000/api/tasks/${id}`, {
+      method: "DELETE",
+    });
+
+    setTasks(tasks.filter((item) => item.id !== id));
+  };
+
+  const updateStatus = async (id, status) => {
+    await fetch(`http://localhost:5000/api/tasks/${id}/status`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ status }),
+    });
+
+    setTasks(
+      tasks.map((item) =>
+        item.id === id ? { ...item, status: status } : item
+      )
+    );
+  };
+
   return (
-    <div className="container">
-      <h1>DevOps Task Manager</h1>
+    <div className="app">
+      <nav className="navbar">
+        <h2>DevOps Task Manager</h2>
+        <span>Full Stack Project</span>
+      </nav>
 
-      <input
-        type="text"
-        placeholder="Enter task title"
-        value={task}
-        onChange={(e) => setTask(e.target.value)}
-      />
+      <main className="dashboard">
+        <section className="hero">
+          <div>
+            <p className="badge">React + Node + Express</p>
+            <h1>Manage Your DevOps Tasks Like a Pro 🚀</h1>
+            <p>
+              A full-stack task management dashboard built for learning DevOps,
+              APIs, Docker, CI/CD and Kubernetes.
+            </p>
+          </div>
+        </section>
 
-      <button onClick={addTask}>Add Task</button>
+        <section className="stats">
+          <div className="stat-card">
+            <h3>{tasks.length}</h3>
+            <p>Total Tasks</p>
+          </div>
 
-      <div>
-        <h2>Task List</h2>
+          <div className="stat-card">
+            <h3>{tasks.filter((item) => item.status === "Pending").length}</h3>
+            <p>Pending</p>
+          </div>
 
-        {tasks.length === 0 ? (
-          <p>No tasks added yet.</p>
-        ) : (
-          <ul>
-            {tasks.map((item) => (
-              <li key={item.id}>
-                {item.title}
+          <div className="stat-card">
+            <h3>
+              {tasks.filter((item) => item.status === "Completed").length}
+            </h3>
+            <p>Completed</p>
+          </div>
+        </section>
 
-                <button
-                 onClick={async () => {
-  await fetch(`http://localhost:5000/api/tasks/${item.id}`, {
-    method: "DELETE",
-  });
+        <section className="task-box">
+          <div className="input-group">
+            <input
+              type="text"
+              placeholder="Enter a new DevOps task..."
+              value={task}
+              onChange={(e) => setTask(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") addTask();
+              }}
+            />
 
-  const updatedTasks = tasks.filter(
-    (task) => task.id !== item.id
-  );
+            <button onClick={addTask}>+ Add Task</button>
+          </div>
 
-  setTasks(updatedTasks);
-}}
-                >
-                  Delete
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
+          <h2>Task List</h2>
+
+          {tasks.length === 0 ? (
+            <div className="empty-box">
+              <h3>No tasks added yet</h3>
+              <p>Start by adding your first DevOps task.</p>
+            </div>
+          ) : (
+            <div className="task-list">
+              {tasks.map((item) => (
+                <div className="task-card" key={item.id}>
+                  <div>
+                    <h3>{item.title}</h3>
+                    <span className="status">
+                      {item.status || "Pending"}
+                    </span>
+                  </div>
+
+                  <div className="task-actions">
+                    <button
+                      className="pending-btn"
+                      onClick={() => updateStatus(item.id, "Pending")}
+                    >
+                      🟡 Pending
+                    </button>
+
+                    <button
+                      className="progress-btn"
+                      onClick={() => updateStatus(item.id, "In Progress")}
+                    >
+                      🔵 In Progress
+                    </button>
+
+                    <button
+                      className="complete-btn"
+                      onClick={() => updateStatus(item.id, "Completed")}
+                    >
+                      🟢 Completed
+                    </button>
+
+                    <button
+                      className="delete-btn"
+                      onClick={() => deleteTask(item.id)}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+      </main>
     </div>
   );
 }
